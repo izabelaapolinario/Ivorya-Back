@@ -3,7 +3,7 @@ name: Deploy .NET App
 on:
   push:
     branches:
-      - master  # Ou a branch desejada
+      - main  # Ou a branch desejada
 
 jobs:
   build:
@@ -16,17 +16,17 @@ jobs:
       - name: Instalar .NET SDK
         run: |
           curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --version 9.0.201
-          export PATH=$PATH:/opt/render/.dotnet
-          /opt/render/.dotnet/dotnet --version
+          export PATH=$PATH:/home/runner/.dotnet  # Atualizando o caminho do .NET
+          /home/runner/.dotnet/dotnet --version  # Verificando a versão do .NET
 
       - name: Restaurar dependências
-        run: /opt/render/.dotnet/dotnet restore
+        run: /home/runner/.dotnet/dotnet restore
 
       - name: Compilar projeto
-        run: /opt/render/.dotnet/dotnet build -c Release
+        run: /home/runner/.dotnet/dotnet build -c Release
 
       - name: Publicar projeto
-        run: /opt/render/.dotnet/dotnet publish /opt/render/project/src/ivorya-back.csproj -c Release -o /opt/render/project/src/out
+        run: /home/runner/.dotnet/dotnet publish /opt/render/project/src/ivorya-back.csproj -c Release -o /opt/render/project/src/out
 
       - name: Executar a aplicação
-        run: /opt/render/.dotnet/dotnet /opt/render/project/src/out/ivorya-back.dll
+        run: /home/runner/.dotnet/dotnet /opt/render/project/src/out/ivorya-back.dll
