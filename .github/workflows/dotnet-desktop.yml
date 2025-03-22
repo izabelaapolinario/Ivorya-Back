@@ -3,7 +3,7 @@ name: Deploy .NET App
 on:
   push:
     branches:
-      - main  # Ou a branch desejada
+      - master  # Ou a branch desejada
 
 jobs:
   build:
