@@ -16,23 +16,28 @@ jobs:
     
     # 2. Instalar .NET SDK (assumindo que você queira a versão 9.0.201)
     - name: Set up .NET Core SDK
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '9.0.201'
-
-    # 3. Restaurar dependências
+      run: |
+        curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --version 9.0.201
+        export PATH=$PATH:$HOME/.dotnet
+        
+    # 3. Verificar se o .NET foi instalado corretamente
+    - name: Verify dotnet installation
+      run: |
+        $HOME/.dotnet/dotnet --version
+    
+    # 4. Restaurar dependências
     - name: Restore dependencies
-      run: dotnet restore
+      run: $HOME/.dotnet/dotnet restore
 
-    # 4. Build do projeto
+    # 5. Build do projeto
     - name: Build project
-      run: dotnet build -c Release -o /app/build
+      run: $HOME/.dotnet/dotnet build -c Release -o /app/build
 
-    # 5. Publicar o projeto
+    # 6. Publicar o projeto
     - name: Publish project
-      run: dotnet publish -c Release -o /app/publish
+      run: $HOME/.dotnet/dotnet publish -c Release -o /app/publish
 
-    # 6. Deploy para o Vercel
+    # 7. Deploy para o Vercel
     - name: Deploy to Vercel
       run: |
         npm install -g vercel
