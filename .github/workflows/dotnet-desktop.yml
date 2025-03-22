@@ -1,23 +1,32 @@
-#!/bin/bash
+name: Deploy .NET App
 
-# Instalação do .NET 9.0.201
+on:
+  push:
+    branches:
+      - main  # Ou a branch desejada
 
-curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --version 9.0.201
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-# Atualizando o PATH para incluir o diretório do .NET
-export PATH=$PATH:/opt/render/.dotnet
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
 
-# Verificando a versão do .NET
-/opt/render/.dotnet/dotnet --version
+      - name: Instalar .NET SDK
+        run: |
+          curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --version 9.0.201
+          export PATH=$PATH:/opt/render/.dotnet
+          /opt/render/.dotnet/dotnet --version
 
-# Restaurando as dependências do projeto
-/opt/render/.dotnet/dotnet restore
+      - name: Restaurar dependências
+        run: /opt/render/.dotnet/dotnet restore
 
-# Compilando o projeto
-/opt/render/.dotnet/dotnet build -c Release
+      - name: Compilar projeto
+        run: /opt/render/.dotnet/dotnet build -c Release
 
-# Publicando o projeto
-/opt/render/.dotnet/dotnet publish /opt/render/project/src/ivorya-back.csproj -c Release -o /opt/render/project/src/out
+      - name: Publicar projeto
+        run: /opt/render/.dotnet/dotnet publish /opt/render/project/src/ivorya-back.csproj -c Release -o /opt/render/project/src/out
 
-# Executando a aplicação
-/opt/render/.dotnet/dotnet /opt/render/project/src/out/ivorya-back.dll
+      - name: Executar a aplicação
+        run: /opt/render/.dotnet/dotnet /opt/render/project/src/out/ivorya-back.dll
