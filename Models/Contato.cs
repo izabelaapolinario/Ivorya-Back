@@ -6,11 +6,10 @@ namespace ivorya_back.Models
     {
         [Key]
         public int IdContato { get; set;  }
-        public string Nome { get; set; }
-        public string Assunto { get; set; }
-        public string Email { get; set; }
-        public string Mensagem { get; set; }
-        public DateTime DataEnvio { get; set; }
-
+        public required  string Nome { get; set; }
+        public required  string Assunto { get; set; }
+        public required  string Email { get; set; }
+        public required  string Mensagem { get; set; }
+        public DateTime DataEnvio { get; set; } = DateTime.Now;
     }
 }
