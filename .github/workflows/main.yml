@@ -1,36 +1,41 @@
-name: Deploy ASP.NET Core API to Vercel
+name: Deploy .NET Core to Vercel
 
 on:
   push:
     branches:
-      - main  # Altere para a branch que você está usando para deploy
-  pull_request:
-    branches:
-      - main  # Altere para a branch que você está usando para deploy
+      - main  # Ou a branch que você deseja
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    # 1. Checkout do código
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    # 2. Instalar .NET SDK (assumindo que você queira a versão 9.0.201)
+    - name: Set up .NET Core SDK
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '9.0.201'
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '9.0.x'
+    # 3. Restaurar dependências
+    - name: Restore dependencies
+      run: dotnet restore
 
-      - name: Restore dependencies
-        run: dotnet restore
+    # 4. Build do projeto
+    - name: Build project
+      run: dotnet build -c Release -o /app/build
 
-      - name: Build the project
-        run: dotnet build --configuration Release
+    # 5. Publicar o projeto
+    - name: Publish project
+      run: dotnet publish -c Release -o /app/publish
 
-      - name: Publish the project
-        run: dotnet publish --configuration Release --output ./out
-
-      - name: Deploy to Vercel
-        run: |
-          npm install -g vercel
-          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
+    # 6. Deploy para o Vercel
+    - name: Deploy to Vercel
+      run: |
+        npm install -g vercel
+        vercel --prod --confirm
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
