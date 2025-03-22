@@ -1,5 +1,13 @@
+using ivorya_back.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("POSTGRES"),
+        o => o.MigrationsHistoryTable("__EFMigrationsHistory", builder.Configuration["DatabaseSettings:Schema"])
+    ));
 // Add services to the container.
 
 builder.Services.AddControllers();

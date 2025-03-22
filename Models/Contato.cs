@@ -10,6 +10,7 @@ namespace ivorya_back.Models
         public string Assunto { get; set; }
         public string Email { get; set; }
         public string Mensagem { get; set; }
+        public DateTime DataEnvio { get; set; }
 
     }
 }

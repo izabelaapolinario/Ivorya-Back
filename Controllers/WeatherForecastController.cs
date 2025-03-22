@@ -1,32 +1,39 @@
+using ivorya_back.Data;
+using ivorya_back.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ivorya_back.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class ContatoController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    private readonly ApplicationDbContext _context;
 
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public ContatoController(ApplicationDbContext context)
     {
-        _logger = logger;
+        _context = context;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpPost("inserir")]
+    public async Task<IActionResult> InserirContato(Contato Contato)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+        _context.Contatos.Add(Contato);
+        await _context.SaveChangesAsync();
+        return Ok(Contato);
     }
+
+    [HttpDelete("deletar/{id}")]
+    public async Task<IActionResult> DeletarContato(int id)
+    {
+        var ContatoExistente = await _context.Contatos.FirstOrDefaultAsync(a => a.IdContato == id);
+        if (ContatoExistente == null)
+            return NotFound("Contato não encontrado.");
+
+        _context.Contatos.Remove(ContatoExistente);
+        await _context.SaveChangesAsync();
+        return Ok("Contato deletado com sucesso.");
+    }
+
 }
