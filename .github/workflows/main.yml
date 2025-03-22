@@ -1,46 +1,34 @@
-name: Deploy .NET Core to Vercel
+name: Build and Deploy .NET Core Application to Azure
 
 on:
   push:
     branches:
-      - main  # Ou a branch que você deseja
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    # 1. Checkout do código
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    
-    # 2. Instalar .NET SDK (assumindo que você queira a versão 9.0.201)
-    - name: Set up .NET Core SDK
-      run: |
-        curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --version 9.0.201
-        export PATH=$PATH:$HOME/.dotnet
-        
-    # 3. Verificar se o .NET foi instalado corretamente
-    - name: Verify dotnet installation
-      run: |
-        $HOME/.dotnet/dotnet --version
-    
-    # 4. Restaurar dependências
-    - name: Restore dependencies
-      run: $HOME/.dotnet/dotnet restore
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    # 5. Build do projeto
-    - name: Build project
-      run: $HOME/.dotnet/dotnet build -c Release -o /app/build
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
 
-    # 6. Publicar o projeto
-    - name: Publish project
-      run: $HOME/.dotnet/dotnet publish -c Release -o /app/publish
+      - name: Restore dependencies
+        run: dotnet restore
 
-    # 7. Deploy para o Vercel
-    - name: Deploy to Vercel
-      run: |
-        npm install -g vercel
-        vercel --prod --confirm
-      env:
-        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Build the project
+        run: dotnet build --configuration Release
+
+      - name: Publish the project
+        run: dotnet publish --configuration Release --output ./publish
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: <your-app-service-name>
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./publish
