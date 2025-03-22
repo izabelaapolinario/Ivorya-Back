@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Instalação do .NET 9.0.201
+
+curl -sSL https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh | bash /dev/stdin --version 9.0.201
+
+# Atualizando o PATH para incluir o diretório do .NET
+export PATH=$PATH:/opt/render/.dotnet
+
+# Verificando a versão do .NET
+/opt/render/.dotnet/dotnet --version
+
+# Restaurando as dependências do projeto
+/opt/render/.dotnet/dotnet restore
+
+# Compilando o projeto
+/opt/render/.dotnet/dotnet build -c Release
+
+# Publicando o projeto
+/opt/render/.dotnet/dotnet publish /opt/render/project/src/ivorya-back.csproj -c Release -o /opt/render/project/src/out
+
+# Executando a aplicação
+/opt/render/.dotnet/dotnet /opt/render/project/src/out/ivorya-back.dll
