@@ -24,10 +24,10 @@ public class ContatoController : ControllerBase
         return Ok(Contato);
     }
 
-    [HttpDelete("deletar/{id}")]
-    public async Task<IActionResult> DeletarContato(int id)
+    [HttpDelete("deletar/{idContato}")]
+    public async Task<IActionResult> DeletarContato(int idContato)
     {
-        var ContatoExistente = await _context.Contatos.FirstOrDefaultAsync(a => a.IdContato == id);
+        var ContatoExistente = await _context.Contatos.FirstOrDefaultAsync(a => a.IdContato == idContato);
         if (ContatoExistente == null)
             return NotFound("Contato não encontrado.");
 
@@ -35,5 +35,19 @@ public class ContatoController : ControllerBase
         await _context.SaveChangesAsync();
         return Ok("Contato deletado com sucesso.");
     }
+    [HttpGet("obter/{idContato}")]
+    public async Task<IActionResult> ObterContato(int idContato)
+    {
+        var contato = await _context.Contatos.FirstOrDefaultAsync(c => c.IdContato == idContato);
+        if (contato == null)
+            return NotFound("Contato não encontrado.");
 
+        return Ok(contato);
+    }
+    [HttpGet("listar")]
+    public async Task<IActionResult> ListarContatos()
+    {
+        var contatos = await _context.Contatos.ToListAsync();
+        return Ok(contatos);
+    }
 }
