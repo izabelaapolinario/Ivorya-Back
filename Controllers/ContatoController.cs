@@ -19,14 +19,12 @@ public class ContatoController : ControllerBase
     [HttpPost("inserir")]
     public async Task<IActionResult> InserirContato([FromBody] Contato contato)
     {
+        if (contato == null)
+        {
+            return BadRequest("Dados de contato inválidos.");
+        }
         try
         {
-            if (contato == null)
-            {
-                return BadRequest("Dados de contato inválidos.");
-            }
-
-            
             _context.Contatos.Add(contato);
             await _context.SaveChangesAsync();
 
@@ -34,7 +32,7 @@ public class ContatoController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Erro interno do servidor:"+ ex);
+            return StatusCode(500, "Erro interno do servidor:" + ex);
         }
     }
 
