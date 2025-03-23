@@ -21,8 +21,15 @@ namespace ivorya_back.Data
             modelBuilder.HasDefaultSchema(_schema);
 
             modelBuilder.Entity<Contato>()
+        .HasKey(c => c.IdContato);
+
+            modelBuilder.Entity<Contato>()
        .Property(c => c.IdContato)
        .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Contato>()
+       .Property(c => c.IdContato)
+       .UseIdentityColumn();
 
             base.OnModelCreating(modelBuilder);
         }
